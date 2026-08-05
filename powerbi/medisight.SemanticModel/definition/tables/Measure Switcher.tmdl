@@ -1,0 +1,39 @@
+table 'Measure Switcher'
+	lineageTag: d7971322-9147-41f9-b60d-9f41bad35b1b
+
+	column 'Measure Name'
+		lineageTag: d16fa6e9-1cca-4e65-b515-8acfd1734ce7
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Measure Name]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Sort Order'
+		formatString: 0
+		lineageTag: 0f0af3b4-7538-475d-86bc-cff2b0fdf57c
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Sort Order]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Measure Switcher' = calculated
+		mode: import
+		source =
+				
+				DATATABLE(
+				    "Measure Name", STRING,
+				    "Sort Order", INTEGER,
+				    {
+				        {"Total Claims", 1},
+				        {"Total Reimbursement", 2},
+				        {"Avg Reimbursement Per Claim", 3},
+				        {"Fraud Rate %", 4},
+				        {"Provider Risk Score", 5},
+				        {"Deceased Patient Claims", 6}
+				    }
+				)
+
+	annotation PBI_Id = 3f0449638b154a0ba6e1276ce4ee90cc
+

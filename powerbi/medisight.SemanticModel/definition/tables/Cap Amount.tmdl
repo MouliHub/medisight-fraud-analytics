@@ -1,0 +1,26 @@
+table 'Cap Amount'
+	lineageTag: dbd91545-5c01-49e5-bec6-dcd255a6a63c
+
+	measure 'Cap Amount Value' = SELECTEDVALUE('Cap Amount'[Cap Amount], 20000)
+		formatString: 0
+		lineageTag: 7d94bf86-d346-4a78-a16c-6f4bede1108b
+
+	column 'Cap Amount'
+		formatString: 0
+		lineageTag: 2b15414f-49f2-40d8-8047-02e0c31ae1fb
+		summarizeBy: none
+		sourceColumn: [Value]
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 0
+				}
+
+		annotation SummarizationSetBy = User
+
+	partition 'Cap Amount' = calculated
+		mode: import
+		source = GENERATESERIES(5000, 50000, 5000)
+
+	annotation PBI_Id = 931fdcfb15264af09bf8104151ae6da7
+

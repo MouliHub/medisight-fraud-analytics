@@ -1,0 +1,152 @@
+table dim_date
+	lineageTag: f679aee3-fec0-415c-8ae3-facb330f8969
+	dataCategory: Time
+
+	column date_key
+		dataType: int64
+		formatString: 0
+		lineageTag: b7d06e0b-e345-4260-a5e8-9eccfa7a5dc8
+		summarizeBy: none
+		sourceColumn: date_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column full_date
+		dataType: dateTime
+		isKey
+		formatString: Long Date
+		lineageTag: eca8c4db-2def-421a-b31a-9d6dd7a41ea1
+		summarizeBy: none
+		sourceColumn: full_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column day_of_month
+		dataType: int64
+		formatString: 0
+		lineageTag: 51d2dd40-296b-4acf-93f9-0929515cc47f
+		summarizeBy: sum
+		sourceColumn: day_of_month
+
+		annotation SummarizationSetBy = Automatic
+
+	column day_name
+		dataType: string
+		lineageTag: 9bdd8348-6b6c-49a0-910a-9596b0c9ffbb
+		summarizeBy: none
+		sourceColumn: day_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column week_of_year
+		dataType: int64
+		formatString: 0
+		lineageTag: 1dce3a63-6701-47b2-9446-321dcf0b91dd
+		summarizeBy: sum
+		sourceColumn: week_of_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_num
+		dataType: int64
+		formatString: 0
+		lineageTag: 9a0a4f8b-cc4b-444d-94a3-b9041ebf94eb
+		summarizeBy: sum
+		sourceColumn: month_num
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_name
+		dataType: string
+		lineageTag: 643ea958-e9cb-4b5d-ba5f-d64f41a784ec
+		summarizeBy: none
+		sourceColumn: month_name
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column quarter_num
+		dataType: int64
+		formatString: 0
+		lineageTag: d7e0da1a-594f-447b-9c86-24e7536d843e
+		summarizeBy: sum
+		sourceColumn: quarter_num
+
+		annotation SummarizationSetBy = Automatic
+
+	column quarter_name
+		dataType: string
+		lineageTag: 12075587-c4bf-4225-b449-55e295becec8
+		summarizeBy: none
+		sourceColumn: quarter_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column year_num
+		dataType: int64
+		formatString: 0
+		lineageTag: 4a4a21ae-9741-44dc-bbdb-cd8299a1845b
+		summarizeBy: sum
+		sourceColumn: year_num
+
+		annotation SummarizationSetBy = Automatic
+
+	column year_month
+		dataType: string
+		lineageTag: 47735f39-944b-4f98-99d2-966db043d4cb
+		summarizeBy: none
+		sourceColumn: year_month
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_weekend
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: d50fd2de-78f9-4c5a-9593-8ab4d3aff3dc
+		summarizeBy: none
+		sourceColumn: is_weekend
+
+		annotation SummarizationSetBy = Automatic
+
+	column dwh_created_at
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 19b15e4e-677f-4c87-9a86-937120516c6f
+		summarizeBy: none
+		sourceColumn: dwh_created_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Year' = FORMAT(dim_date[full_date], "MMM yyyy")
+		lineageTag: 2aca1b7d-f39b-4a37-b7cd-e7368cf8760d
+		summarizeBy: none
+		sortByColumn: 'Month Year Sort'
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Year Sort' = YEAR(dim_date[full_date]) * 100 + MONTH(dim_date[full_date])
+		formatString: 0
+		lineageTag: 884f5711-3523-40a5-a8d2-b5c83ac12658
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_date = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("LAPTOP-03S07GO9"),
+				    MediSight = Source{[Name="MediSight"]}[Data],
+				    gold_dim_date = MediSight{[Schema="gold",Item="dim_date"]}[Data]
+				in
+				    gold_dim_date
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

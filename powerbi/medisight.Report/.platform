@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "medisight"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "60c20670-8b64-4b1f-b688-69549f386941"
+  }
+}

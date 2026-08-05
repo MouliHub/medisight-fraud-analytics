@@ -1,0 +1,20 @@
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Power BI temp/lock files
+~$*.pbix
+*.pbix.lock
+
+# Data files (linked in data/README.md instead)
+data/raw/
+*.csv
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

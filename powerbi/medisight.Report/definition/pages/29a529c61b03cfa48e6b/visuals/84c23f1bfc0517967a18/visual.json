@@ -1,0 +1,142 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "name": "84c23f1bfc0517967a18",
+  "position": {
+    "x": 23.076923076923077,
+    "y": 469.23076923076923,
+    "z": 6000,
+    "height": 250,
+    "width": 1257.6923076923076,
+    "tabOrder": 6000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_beneficiary"
+                    }
+                  },
+                  "Property": "beneficiary_id"
+                }
+              },
+              "queryRef": "dim_beneficiary.beneficiary_id",
+              "nativeQueryRef": "beneficiary_id"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_claims"
+                    }
+                  },
+                  "Property": "claim_type"
+                }
+              },
+              "queryRef": "fact_claims.claim_type",
+              "nativeQueryRef": "claim_type"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_claims"
+                    }
+                  },
+                  "Property": "Total Reimbursement"
+                }
+              },
+              "queryRef": "fact_claims.Total Reimbursement",
+              "nativeQueryRef": "Total Reimbursement"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_claims"
+                    }
+                  },
+                  "Property": "Avg Diagnosis Codes"
+                }
+              },
+              "queryRef": "fact_claims.Avg Diagnosis Codes",
+              "nativeQueryRef": "Avg Diagnosis Codes"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_beneficiary"
+                    }
+                  },
+                  "Property": "is_deceased"
+                }
+              },
+              "queryRef": "dim_beneficiary.is_deceased",
+              "nativeQueryRef": "is_deceased"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Claim Details'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "border": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "dropShadow": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

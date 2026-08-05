@@ -1,0 +1,191 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "name": "1b69a84aae480d4ec1c4",
+  "position": {
+    "x": 280,
+    "y": 332,
+    "z": 17000,
+    "height": 250.1820983330999,
+    "width": 623.20344396611586,
+    "tabOrder": 17000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_beneficiary"
+                    }
+                  },
+                  "Property": "beneficiary_id"
+                }
+              },
+              "queryRef": "dim_beneficiary.beneficiary_id",
+              "nativeQueryRef": "Beneficiary ID",
+              "displayName": "Beneficiary ID"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "dim_beneficiary"
+                        }
+                      },
+                      "Property": "chronic_condition_count"
+                    }
+                  },
+                  "Function": 0
+                }
+              },
+              "queryRef": "Sum(dim_beneficiary.chronic_condition_count)",
+              "nativeQueryRef": "Total Chronic Conditions",
+              "displayName": "Total Chronic Conditions"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_beneficiary"
+                    }
+                  },
+                  "Property": "Beneficiary Annual Cost"
+                }
+              },
+              "queryRef": "dim_beneficiary.Beneficiary Annual Cost",
+              "nativeQueryRef": "Beneficiary Annual Cost"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_beneficiary"
+                    }
+                  },
+                  "Property": "Care Management Priority Flag"
+                }
+              },
+              "queryRef": "dim_beneficiary.Care Management Priority Flag",
+              "nativeQueryRef": "Care Management Priority Flag"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "dim_beneficiary"
+                  }
+                },
+                "Property": "Beneficiary Annual Cost"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "visualContainerObjects": {
+      "dropShadow": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Beneficiaries Recommended for Care Management Enrollment'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "64455814dbad2759629c",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_beneficiary"
+              }
+            },
+            "Property": "Care Management Priority Flag"
+          }
+        },
+        "type": "Advanced",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "d",
+              "Entity": "dim_beneficiary",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "Contains": {
+                  "Left": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Source": "d"
+                        }
+                      },
+                      "Property": "Care Management Priority Flag"
+                    }
+                  },
+                  "Right": {
+                    "Literal": {
+                      "Value": "'🔴 High Priority — Enroll'"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "howCreated": "User"
+      }
+    ]
+  }
+}

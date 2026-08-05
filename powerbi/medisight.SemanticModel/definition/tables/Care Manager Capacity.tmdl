@@ -1,0 +1,26 @@
+table 'Care Manager Capacity'
+	lineageTag: 619baf1a-bad4-4a9f-a164-9b564310466b
+
+	measure 'Care Manager Capacity Value' = SELECTEDVALUE('Care Manager Capacity'[Care Manager Capacity], 5000)
+		formatString: 0
+		lineageTag: f1fc01f8-7b19-4877-879b-8c46788efca1
+
+	column 'Care Manager Capacity'
+		formatString: 0
+		lineageTag: 03fd51e2-2693-4a7b-82b8-76ff68445c99
+		summarizeBy: none
+		sourceColumn: [Value]
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 0
+				}
+
+		annotation SummarizationSetBy = User
+
+	partition 'Care Manager Capacity' = calculated
+		mode: import
+		source = GENERATESERIES(500, 20000, 500)
+
+	annotation PBI_Id = b5d5e7c4656b40c2b5a096ce3f97ad36
+

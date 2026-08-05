@@ -1,0 +1,360 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "name": "2fc12545749796638a1b",
+  "position": {
+    "x": 280,
+    "y": 332,
+    "z": 2000,
+    "height": 376.84210526315786,
+    "width": 543.40199335548164,
+    "tabOrder": 2000
+  },
+  "visual": {
+    "visualType": "barChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_provider"
+                    }
+                  },
+                  "Property": "provider_id"
+                }
+              },
+              "queryRef": "dim_provider.provider_id",
+              "nativeQueryRef": "provider_id",
+              "active": true
+            }
+          ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_claims"
+                    }
+                  },
+                  "Property": "Provider Risk Score"
+                }
+              },
+              "queryRef": "fact_claims.Provider Risk Score",
+              "nativeQueryRef": "Provider Risk Score"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_claims"
+                    }
+                  },
+                  "Property": "Risk Factor - Deceased Claims"
+                }
+              },
+              "queryRef": "fact_claims.Risk Factor - Deceased Claims",
+              "nativeQueryRef": "Deceased Claims",
+              "displayName": "Deceased Claims"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_claims"
+                    }
+                  },
+                  "Property": "Risk Factor - Diagnosis Padding"
+                }
+              },
+              "queryRef": "fact_claims.Risk Factor - Diagnosis Padding",
+              "nativeQueryRef": "Diagnosis Padding",
+              "displayName": "Diagnosis Padding"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_claims"
+                    }
+                  },
+                  "Property": "Risk Factor - Known Fraud Label"
+                }
+              },
+              "queryRef": "fact_claims.Risk Factor - Known Fraud Label",
+              "nativeQueryRef": " Known Fraud Label",
+              "displayName": " Known Fraud Label"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_claims"
+                    }
+                  },
+                  "Property": "Risk Factor - Reimbursement Anomaly"
+                }
+              },
+              "queryRef": "fact_claims.Risk Factor - Reimbursement Anomaly",
+              "nativeQueryRef": "Reimbursement Anomaly",
+              "displayName": "Reimbursement Anomaly"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_claims"
+                    }
+                  },
+                  "Property": "Risk Factor - Same Day Discharge"
+                }
+              },
+              "queryRef": "fact_claims.Risk Factor - Same Day Discharge",
+              "nativeQueryRef": "Risk Factor - Same Day Discharge"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_claims"
+                    }
+                  },
+                  "Property": "Risk Factor - Deceased Claims"
+                }
+              },
+              "queryRef": "fact_claims.Risk Factor - Deceased Claims",
+              "nativeQueryRef": "Deceased Claims",
+              "displayName": "Deceased Claims"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_claims"
+                    }
+                  },
+                  "Property": "Risk Factor - Diagnosis Padding"
+                }
+              },
+              "queryRef": "fact_claims.Risk Factor - Diagnosis Padding",
+              "nativeQueryRef": "Diagnosis Padding",
+              "displayName": "Diagnosis Padding"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_claims"
+                    }
+                  },
+                  "Property": "Risk Factor - Known Fraud Label"
+                }
+              },
+              "queryRef": "fact_claims.Risk Factor - Known Fraud Label",
+              "nativeQueryRef": " Known Fraud Label",
+              "displayName": " Known Fraud Label"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_claims"
+                    }
+                  },
+                  "Property": "Risk Factor - Reimbursement Anomaly"
+                }
+              },
+              "queryRef": "fact_claims.Risk Factor - Reimbursement Anomaly",
+              "nativeQueryRef": "Reimbursement Anomaly",
+              "displayName": "Reimbursement Anomaly"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_claims"
+                    }
+                  },
+                  "Property": "Risk Factor - Same Day Discharge"
+                }
+              },
+              "queryRef": "fact_claims.Risk Factor - Same Day Discharge",
+              "nativeQueryRef": "Risk Factor - Same Day Discharge"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "fact_claims"
+                  }
+                },
+                "Property": "Risk Factor - Deceased Claims"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "visualContainerObjects": {
+      "dropShadow": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Provider Risk Score — Factor Breakdown (Top 20)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "a365c111d640a23bb150",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_provider"
+              }
+            },
+            "Property": "provider_id"
+          }
+        },
+        "type": "TopN",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "subquery",
+              "Expression": {
+                "Subquery": {
+                  "Query": {
+                    "Version": 2,
+                    "From": [
+                      {
+                        "Name": "d",
+                        "Entity": "dim_provider",
+                        "Type": 0
+                      },
+                      {
+                        "Name": "f",
+                        "Entity": "fact_claims",
+                        "Type": 0
+                      }
+                    ],
+                    "Select": [
+                      {
+                        "Column": {
+                          "Expression": {
+                            "SourceRef": {
+                              "Source": "d"
+                            }
+                          },
+                          "Property": "provider_id"
+                        },
+                        "Name": "field"
+                      }
+                    ],
+                    "OrderBy": [
+                      {
+                        "Direction": 2,
+                        "Expression": {
+                          "Measure": {
+                            "Expression": {
+                              "SourceRef": {
+                                "Source": "f"
+                              }
+                            },
+                            "Property": "Provider Risk Score"
+                          }
+                        }
+                      }
+                    ],
+                    "Top": 20
+                  }
+                }
+              },
+              "Type": 2
+            },
+            {
+              "Name": "d",
+              "Entity": "dim_provider",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "In": {
+                  "Expressions": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "d"
+                          }
+                        },
+                        "Property": "provider_id"
+                      }
+                    }
+                  ],
+                  "Table": {
+                    "SourceRef": {
+                      "Source": "subquery"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

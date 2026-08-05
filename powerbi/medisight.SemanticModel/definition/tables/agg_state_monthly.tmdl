@@ -1,0 +1,166 @@
+table agg_state_monthly
+	lineageTag: 838c78b8-5fe8-4ad6-bbb5-992f5e779e3c
+
+	column state_code
+		dataType: int64
+		formatString: 0
+		lineageTag: a4d57114-33f7-4cb1-981b-24b22c1ae3de
+		summarizeBy: none
+		sourceColumn: state_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column state_name
+		dataType: string
+		lineageTag: fb48169b-3074-4a81-90a9-85d5be6ed6f6
+		summarizeBy: none
+		sourceColumn: state_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column state_abbr
+		dataType: string
+		lineageTag: 99ebf7b5-6347-46a5-bdf3-3ec95bf38382
+		summarizeBy: none
+		sourceColumn: state_abbr
+
+		annotation SummarizationSetBy = Automatic
+
+	column region
+		dataType: string
+		lineageTag: 78245316-fa1a-4a0b-ab6a-4bf8a2f88c97
+		summarizeBy: none
+		sourceColumn: region
+
+		annotation SummarizationSetBy = Automatic
+
+	column year_num
+		dataType: int64
+		formatString: 0
+		lineageTag: e96e9198-c013-4bac-bcbb-f4a93fcab751
+		summarizeBy: sum
+		sourceColumn: year_num
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_num
+		dataType: int64
+		formatString: 0
+		lineageTag: b14773ba-7f54-4432-bc1d-c7be32f117b7
+		summarizeBy: sum
+		sourceColumn: month_num
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_name
+		dataType: string
+		lineageTag: 94cdbf8b-5cb1-485f-be9f-ac26df8e3076
+		summarizeBy: none
+		sourceColumn: month_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column year_month
+		dataType: string
+		lineageTag: 45490091-f0e4-4185-8b59-20f03888ddc8
+		summarizeBy: none
+		sourceColumn: year_month
+
+		annotation SummarizationSetBy = Automatic
+
+	column total_claims
+		dataType: int64
+		formatString: 0
+		lineageTag: 6813c1e6-dbab-44bf-b243-d545ad86c2f8
+		summarizeBy: sum
+		sourceColumn: total_claims
+
+		annotation SummarizationSetBy = Automatic
+
+	column total_ip_claims
+		dataType: int64
+		formatString: 0
+		lineageTag: 0ef92db2-2f05-43b7-94af-319697a57287
+		summarizeBy: sum
+		sourceColumn: total_ip_claims
+
+		annotation SummarizationSetBy = Automatic
+
+	column total_op_claims
+		dataType: int64
+		formatString: 0
+		lineageTag: 4c9adda3-22d3-42f1-a9e5-13d80c6473d7
+		summarizeBy: sum
+		sourceColumn: total_op_claims
+
+		annotation SummarizationSetBy = Automatic
+
+	column total_reimbursement
+		dataType: int64
+		formatString: 0
+		lineageTag: 1b40fe3b-daa0-4757-a58f-65a2b165632a
+		summarizeBy: sum
+		sourceColumn: total_reimbursement
+
+		annotation SummarizationSetBy = Automatic
+
+	column avg_reimbursement_per_claim
+		dataType: double
+		lineageTag: 784153c0-8c01-427b-afdf-215207817561
+		summarizeBy: sum
+		sourceColumn: avg_reimbursement_per_claim
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column unique_providers
+		dataType: int64
+		formatString: 0
+		lineageTag: cc02be75-1b97-404b-aa88-7fe985d39faf
+		summarizeBy: sum
+		sourceColumn: unique_providers
+
+		annotation SummarizationSetBy = Automatic
+
+	column unique_beneficiaries
+		dataType: int64
+		formatString: 0
+		lineageTag: 64f31b53-d78f-4495-bc02-a4b2cf78696c
+		summarizeBy: sum
+		sourceColumn: unique_beneficiaries
+
+		annotation SummarizationSetBy = Automatic
+
+	column fraud_provider_claims
+		dataType: int64
+		formatString: 0
+		lineageTag: 4467c50c-6e84-4487-ba6b-d7dd2d21507c
+		summarizeBy: sum
+		sourceColumn: fraud_provider_claims
+
+		annotation SummarizationSetBy = Automatic
+
+	column dwh_created_at
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: c1355bff-9dfa-4488-b50b-476486846a12
+		summarizeBy: none
+		sourceColumn: dwh_created_at
+
+		annotation SummarizationSetBy = Automatic
+
+	partition agg_state_monthly = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("LAPTOP-03S07GO9"),
+				    MediSight = Source{[Name="MediSight"]}[Data],
+				    gold_agg_state_monthly = MediSight{[Schema="gold",Item="agg_state_monthly"]}[Data]
+				in
+				    gold_agg_state_monthly
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

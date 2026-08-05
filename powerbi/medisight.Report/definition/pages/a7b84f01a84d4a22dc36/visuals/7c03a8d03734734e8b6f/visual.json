@@ -1,0 +1,128 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "name": "7c03a8d03734734e8b6f",
+  "position": {
+    "x": 1348.6876822663519,
+    "y": 332,
+    "z": 19000,
+    "height": 250.1820983330999,
+    "width": 551.31231773364811,
+    "tabOrder": 19000
+  },
+  "visual": {
+    "visualType": "scatterChart",
+    "query": {
+      "queryState": {
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_beneficiary"
+                    }
+                  },
+                  "Property": "age_group"
+                }
+              },
+              "queryRef": "dim_beneficiary.age_group",
+              "nativeQueryRef": "Age Group",
+              "displayName": "Age Group"
+            }
+          ]
+        },
+        "Size": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_claims"
+                    }
+                  },
+                  "Property": "Total Claims"
+                }
+              },
+              "queryRef": "fact_claims.Total Claims",
+              "nativeQueryRef": "Total Claims"
+            }
+          ]
+        },
+        "X": {
+          "projections": [
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "dim_beneficiary"
+                        }
+                      },
+                      "Property": "chronic_condition_count"
+                    }
+                  },
+                  "Function": 1
+                }
+              },
+              "queryRef": "Sum(dim_beneficiary.chronic_condition_count)",
+              "nativeQueryRef": "Avg of Chronic_Condition_Count",
+              "active": true,
+              "displayName": "Avg of Chronic_Condition_Count"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_claims"
+                    }
+                  },
+                  "Property": "Avg Reimbursement Per Beneficiary"
+                }
+              },
+              "queryRef": "fact_claims.Avg Reimbursement Per Beneficiary",
+              "nativeQueryRef": "Avg Reimbursement Per Beneficiary"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'High Utilizer Analysis — Chronic Burden vs Cost'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "dropShadow": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

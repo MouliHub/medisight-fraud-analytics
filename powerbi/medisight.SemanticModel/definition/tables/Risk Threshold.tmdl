@@ -1,0 +1,26 @@
+table 'Risk Threshold'
+	lineageTag: 3d603d7f-952d-4f8c-bd9a-9e736c1517bf
+
+	measure 'Risk Threshold Value' = SELECTEDVALUE('Risk Threshold'[Risk Threshold], 6)
+		formatString: 0
+		lineageTag: ba7e8569-e17c-4884-a135-baafa937eb5b
+
+	column 'Risk Threshold'
+		formatString: 0
+		lineageTag: e77f6406-90fa-4f3f-bebc-58f0137e217c
+		summarizeBy: none
+		sourceColumn: [Value]
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 0
+				}
+
+		annotation SummarizationSetBy = User
+
+	partition 'Risk Threshold' = calculated
+		mode: import
+		source = GENERATESERIES(1, 15, 1)
+
+	annotation PBI_Id = 4981c25d7ca44ea598b22ebe59510475
+

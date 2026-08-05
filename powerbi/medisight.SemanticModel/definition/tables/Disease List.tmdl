@@ -1,0 +1,26 @@
+table 'Disease List'
+	lineageTag: 60773e4c-1451-4256-b9b0-764318c3dc26
+
+	column 'Disease Name'
+		lineageTag: f96ec392-4cf8-4af4-9899-541e52189ba7
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Disease Name]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Disease List' = calculated
+		mode: import
+		source =
+				
+				DATATABLE(
+				    "Disease Name", STRING,
+				    {
+				        {"Alzheimer's"}, {"Heart Failure"}, {"Kidney Disease"}, {"Cancer"},
+				        {"COPD"}, {"Depression"}, {"Diabetes"}, {"Ischemic Heart Disease"},
+				        {"Osteoporosis"}, {"Rheumatoid Arthritis"}, {"Stroke"}
+				    }
+				)
+
+	annotation PBI_Id = 83d665c023ed4941bc5176812c4344f1
+

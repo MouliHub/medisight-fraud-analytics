@@ -1,0 +1,93 @@
+table dim_provider
+	lineageTag: d21ee153-b248-4405-936b-b75902095f53
+
+	column provider_key
+		dataType: int64
+		formatString: 0
+		lineageTag: c788690f-f80c-4fad-9d53-dcc01d883bb5
+		summarizeBy: none
+		sourceColumn: provider_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column provider_id
+		dataType: string
+		lineageTag: ec9cfda2-8bb9-46b5-b83b-5e13c7ca2650
+		summarizeBy: none
+		sourceColumn: provider_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_potential_fraud
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 679d4ac5-8bb1-417a-abec-63831643eab5
+		summarizeBy: none
+		sourceColumn: is_potential_fraud
+
+		annotation SummarizationSetBy = Automatic
+
+	column fraud_label
+		dataType: string
+		lineageTag: 85ace26e-96d1-43ce-a636-967974790445
+		summarizeBy: none
+		sourceColumn: fraud_label
+
+		annotation SummarizationSetBy = Automatic
+
+	column dwh_created_at
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 32e40328-bde7-423f-9a0d-393ab5aeebaa
+		summarizeBy: none
+		sourceColumn: dwh_created_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Risk Category' =
+			
+			VAR Score =
+			    CALCULATE([Provider Risk Score])
+			RETURN
+			    IF(Score >= 9,  "🔴 Critical",
+			    IF(Score >= 6,  "🟠 High",
+			    IF(Score >= 3,  "🟡 Medium",
+			    IF(Score >= 1,  "🟢 Low",
+			                    "⚪ Clean"))))
+		lineageTag: b3b185a1-e16f-4d50-b52c-1a3d0496df53
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Payment Hold Recommendation (Column)' =
+			
+			VAR MinVolume = CALCULATE([Total Claims]) >= 5
+			VAR SameDayFlag = CALCULATE([Same Day Discharge %]) > 0.10
+			VAR PaddingFlag = CALCULATE([Diagnosis Padding Score]) > 8.5
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    NOT MinVolume, "⚪ Insufficient Volume for Assessment",
+			    SameDayFlag && PaddingFlag, "🔴 Recommend Payment Hold — Pending Review",
+			    SameDayFlag || PaddingFlag, "🟠 Recommend Pre-Payment Review",
+			    "🟢 Standard Processing"
+			)
+		lineageTag: 01076f90-87e1-401d-834c-eb5f8342f127
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_provider = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("LAPTOP-03S07GO9"),
+				    MediSight = Source{[Name="MediSight"]}[Data],
+				    gold_dim_provider = MediSight{[Schema="gold",Item="dim_provider"]}[Data]
+				in
+				    gold_dim_provider
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

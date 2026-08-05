@@ -1,0 +1,91 @@
+table agg_chronic_disease
+	lineageTag: 309e1657-32f8-485c-be81-271b66393219
+
+	column disease_name
+		dataType: string
+		lineageTag: cf4ca291-1bb6-418e-85de-92eb38b82a1c
+		summarizeBy: none
+		sourceColumn: disease_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column total_beneficiaries
+		dataType: int64
+		formatString: 0
+		lineageTag: d3419a37-9e40-4477-897c-797928b7450c
+		summarizeBy: sum
+		sourceColumn: total_beneficiaries
+
+		annotation SummarizationSetBy = Automatic
+
+	column pct_of_all_beneficiaries
+		dataType: double
+		lineageTag: ba670a24-f5a5-4199-a08b-22f12805172b
+		summarizeBy: sum
+		sourceColumn: pct_of_all_beneficiaries
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column total_claims
+		dataType: int64
+		formatString: 0
+		lineageTag: a1f16860-5657-4052-9f03-c78a4b7cfa7d
+		summarizeBy: sum
+		sourceColumn: total_claims
+
+		annotation SummarizationSetBy = Automatic
+
+	column total_reimbursement
+		dataType: int64
+		formatString: 0
+		lineageTag: 17e0156b-5de9-457e-b500-c0ef523fe229
+		summarizeBy: sum
+		sourceColumn: total_reimbursement
+
+		annotation SummarizationSetBy = Automatic
+
+	column avg_reimbursement_per_patient
+		dataType: double
+		lineageTag: 9728b593-d2cd-40b2-bf18-187d46c7ec92
+		summarizeBy: sum
+		sourceColumn: avg_reimbursement_per_patient
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column avg_chronic_count_for_patients_with_this
+		dataType: double
+		lineageTag: 5effbf56-2e29-4a39-a4b7-999b279b65c0
+		summarizeBy: sum
+		sourceColumn: avg_chronic_count_for_patients_with_this
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column dwh_created_at
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 812631a9-3add-4334-a2df-e540b76eafdb
+		summarizeBy: none
+		sourceColumn: dwh_created_at
+
+		annotation SummarizationSetBy = Automatic
+
+	partition agg_chronic_disease = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("LAPTOP-03S07GO9"),
+				    MediSight = Source{[Name="MediSight"]}[Data],
+				    gold_agg_chronic_disease = MediSight{[Schema="gold",Item="agg_chronic_disease"]}[Data]
+				in
+				    gold_agg_chronic_disease
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

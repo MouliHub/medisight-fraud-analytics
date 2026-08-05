@@ -1,0 +1,32 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-IN
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["dim_provider","dim_beneficiary","dim_date","dim_geography","fact_claims","agg_provider_summary","agg_state_monthly","agg_chronic_disease"]
+
+annotation PBI_ProTooling = ["MCP-PBIModeling","DevMode"]
+
+ref table dim_provider
+ref table dim_beneficiary
+ref table dim_date
+ref table dim_geography
+ref table fact_claims
+ref table agg_provider_summary
+ref table agg_state_monthly
+ref table agg_chronic_disease
+ref table 'Risk Threshold'
+ref table 'Financial Exposure Waterfall'
+ref table 'TopN Selector'
+ref table 'Measure Switcher'
+ref table 'Cap Amount'
+ref table 'Care Manager Capacity'
+ref table 'Disease List'
+
+ref cultureInfo en-US
+

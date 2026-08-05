@@ -1,0 +1,30 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "7e238b78c1f89531cfc5",
+  "displayName": "Provider Risk Intelligence",
+  "displayOption": "ActualSize",
+  "height": 1080,
+  "width": 1920,
+  "objects": {
+    "outspacePane": [
+      {
+        "properties": {
+          "width": {
+            "expr": {
+              "Literal": {
+                "Value": "219L"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "visualInteractions": [
+    {
+      "source": "766fde1e3421d10d89ef",
+      "target": "efc7604f8fe3b393baa5",
+      "type": "DataFilter"
+    }
+  ]
+}

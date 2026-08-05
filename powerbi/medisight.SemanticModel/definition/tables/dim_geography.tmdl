@@ -1,0 +1,68 @@
+table dim_geography
+	lineageTag: e04096e5-3932-43d1-b6ab-27929b5cf94b
+
+	column geo_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 660e12be-4a61-417f-b749-b6ff0fbd1fd1
+		summarizeBy: sum
+		sourceColumn: geo_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column state_code
+		dataType: int64
+		formatString: 0
+		lineageTag: 2f43ff7c-9ebd-486b-ac34-740390f6faee
+		summarizeBy: none
+		sourceColumn: state_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column state_name
+		dataType: string
+		lineageTag: 686ebf40-2b50-4be9-96b6-c17b9583d4af
+		summarizeBy: none
+		sourceColumn: state_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column state_abbr
+		dataType: string
+		lineageTag: 787297f4-929b-4550-974e-81b56fe8639f
+		summarizeBy: none
+		sourceColumn: state_abbr
+
+		annotation SummarizationSetBy = Automatic
+
+	column region
+		dataType: string
+		lineageTag: d33be52f-06c1-4ef6-be72-3bddf2d3b392
+		summarizeBy: none
+		sourceColumn: region
+
+		annotation SummarizationSetBy = Automatic
+
+	column dwh_created_at
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 035e1585-eff0-4cef-9a38-0e35f714eb12
+		summarizeBy: none
+		sourceColumn: dwh_created_at
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_geography = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("LAPTOP-03S07GO9"),
+				    MediSight = Source{[Name="MediSight"]}[Data],
+				    gold_dim_geography = MediSight{[Schema="gold",Item="dim_geography"]}[Data]
+				in
+				    gold_dim_geography
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

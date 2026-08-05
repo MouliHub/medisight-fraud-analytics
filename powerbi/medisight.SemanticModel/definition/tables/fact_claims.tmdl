@@ -1,0 +1,855 @@
+table fact_claims
+	lineageTag: f9ec1556-6431-4ff3-9b5a-915e11058813
+
+	/// Total number of claims
+	measure 'Total Claims' = COUNTROWS(fact_claims)
+		formatString: #,##0
+		displayFolder: 1. Base Measures
+		lineageTag: 3dd0543c-1cb4-4ac1-98e0-f8702a68a0b2
+
+	/// Total reimbursement amount
+	measure 'Total Reimbursement' = SUM(fact_claims[claim_reimbursement_amt])
+		formatString: $#,##0
+		displayFolder: 1. Base Measures
+		lineageTag: a6f77fba-0139-47cc-a21f-f27104f362fe
+
+	/// Total deductible paid
+	measure 'Total Deductible' = SUM(fact_claims[deductible_amt_paid])
+		formatString: $#,##0
+		displayFolder: 1. Base Measures
+		lineageTag: cab5734c-14e0-48a7-a898-a093501a598c
+
+	/// Total unique providers
+	measure 'Total Providers' = DISTINCTCOUNT(fact_claims[provider_key])
+		formatString: #,##0
+		displayFolder: 1. Base Measures
+		lineageTag: c6fc62c9-b5be-42fd-bf0b-d2f1d34d93ef
+
+	/// Total unique beneficiaries
+	measure 'Total Beneficiaries' = DISTINCTCOUNT(fact_claims[beneficiary_key])
+		formatString: #,##0
+		displayFolder: 1. Base Measures
+		lineageTag: a33f2fbd-3935-4b12-8ae2-21bf0fc11741
+
+	/// Average reimbursement per claim
+	measure 'Avg Reimbursement Per Claim' = DIVIDE([Total Reimbursement], [Total Claims], 0)
+		formatString: $#,##0.00
+		displayFolder: 1. Base Measures
+		lineageTag: b447a91b-a6d3-4e11-ab16-c8065ca0f102
+
+	/// Average claim duration in days
+	measure 'Avg Claim Duration Days' = AVERAGE(fact_claims[claim_duration_days])
+		formatString: #,##0.0
+		displayFolder: 1. Base Measures
+		lineageTag: eaf3339f-b887-4d33-a14a-71939d32dc26
+
+	/// Count of fraud-labeled providers
+	measure 'Fraud Providers' =
+			CALCULATE(
+			    DISTINCTCOUNT(fact_claims[provider_key]),
+			    dim_provider[is_potential_fraud] = TRUE()
+			)
+		formatString: #,##0
+		displayFolder: 2. Fraud Measures
+		lineageTag: 5bf8fe61-dab0-4bdb-ab0c-a170702b9d32
+
+	/// Fraud rate as % of total providers
+	measure 'Fraud Rate %' = DIVIDE([Fraud Providers], [Total Providers], 0)
+		formatString: 0.00%
+		displayFolder: 2. Fraud Measures
+		lineageTag: 91b21ccc-20e9-421a-93e3-107c19122672
+
+	/// Total reimbursement from fraud providers
+	measure 'Fraud Reimbursement' =
+			CALCULATE(
+			    [Total Reimbursement],
+			    dim_provider[is_potential_fraud] = TRUE()
+			)
+		formatString: $#,##0
+		displayFolder: 2. Fraud Measures
+		lineageTag: 1be7633e-2a72-4813-9a36-31bc111f76e9
+
+	/// Fraud reimbursement as % of total
+	measure 'Fraud Reimbursement %' = DIVIDE([Fraud Reimbursement], [Total Reimbursement], 0)
+		formatString: 0.00%
+		displayFolder: 2. Fraud Measures
+		lineageTag: 861a77e4-4eb8-4bfe-b8d8-4dba34b31077
+
+	/// Total reimbursement from non-fraud providers
+	measure 'Non Fraud Reimbursement' =
+			CALCULATE(
+			    [Total Reimbursement],
+			    dim_provider[is_potential_fraud] = FALSE()
+			)
+		formatString: $#,##0
+		displayFolder: 2. Fraud Measures
+		lineageTag: f7dc4935-a946-462d-ba5d-c271837cc9d9
+
+	/// Claims from deceased beneficiaries - key fraud signal
+	measure 'Deceased Patient Claims' =
+			CALCULATE(
+			    COUNTROWS(fact_claims),
+			    dim_beneficiary[is_deceased] = TRUE()
+			)
+		formatString: #,##0
+		displayFolder: 2. Fraud Measures
+		lineageTag: 2cd82661-22f4-4bfe-8747-0a4ce2a0cca2
+
+	/// Claims with zero reimbursement amount
+	measure 'Zero Reimbursement Claims' =
+			CALCULATE(
+			    COUNTROWS(fact_claims),
+			    fact_claims[is_zero_reimbursement] = TRUE()
+			)
+		formatString: #,##0
+		displayFolder: 2. Fraud Measures
+		lineageTag: 2247b905-423a-4dc0-9927-bbd463133269
+
+	/// Inpatient claims with same-day admission and discharge
+	measure 'Same Day Discharge Count' =
+			CALCULATE(
+			    COUNTROWS(fact_claims),
+			    fact_claims[is_same_day_discharge] = TRUE()
+			)+0
+		formatString: #,##0
+		displayFolder: 2. Fraud Measures
+		lineageTag: 27e308e3-961a-45eb-aeb0-6245201c9038
+
+	/// Same-day discharge rate as % of inpatient claims
+	measure 'Same Day Discharge %' = DIVIDE([Same Day Discharge Count], [IP Claims], 0)
+		formatString: 0.00%
+		displayFolder: 2. Fraud Measures
+		lineageTag: 02dcd097-0657-4b25-aed1-26e5e698fb3c
+
+	/// Total inpatient claims
+	measure 'IP Claims' = CALCULATE([Total Claims], fact_claims[claim_type] = "Inpatient")
+		formatString: #,##0
+		displayFolder: 3. IP vs OP Measures
+		lineageTag: 664e7ffc-20f8-428b-a631-e02463fd3ad8
+
+	/// Total outpatient claims
+	measure 'OP Claims' = CALCULATE([Total Claims], fact_claims[claim_type] = "Outpatient")
+		formatString: #,##0
+		displayFolder: 3. IP vs OP Measures
+		lineageTag: 1835144d-857f-4075-8bde-7b7f5fddb41c
+
+	/// Total inpatient reimbursement
+	measure 'IP Reimbursement' = CALCULATE([Total Reimbursement], fact_claims[claim_type] = "Inpatient")
+		formatString: $#,##0
+		displayFolder: 3. IP vs OP Measures
+		lineageTag: 797ab08a-1026-48d9-8bc9-4021a6d2e5de
+
+	/// Total outpatient reimbursement
+	measure 'OP Reimbursement' = CALCULATE([Total Reimbursement], fact_claims[claim_type] = "Outpatient")
+		formatString: $#,##0
+		displayFolder: 3. IP vs OP Measures
+		lineageTag: 5dc1349f-8794-49b6-9e84-71f3cb5942c8
+
+	/// Average reimbursement per inpatient claim
+	measure 'IP Avg Reimbursement' = DIVIDE([IP Reimbursement], [IP Claims], 0)
+		formatString: $#,##0.00
+		displayFolder: 3. IP vs OP Measures
+		lineageTag: f6668411-1811-4547-ba5a-44f6928e062e
+
+	/// Average reimbursement per outpatient claim
+	measure 'OP Avg Reimbursement' = DIVIDE([OP Reimbursement], [OP Claims], 0)
+		formatString: $#,##0.00
+		displayFolder: 3. IP vs OP Measures
+		lineageTag: b56c1abd-46c7-4d7a-967b-8ff5da6e34af
+
+	/// Global average reimbursement across all providers
+	measure 'Global Avg Reimbursement' = CALCULATE([Avg Reimbursement Per Claim], ALL(dim_provider))
+		formatString: $#,##0.00
+		displayFolder: 4. Risk & Benchmark Measures
+		lineageTag: 0fb84e3a-aafd-484e-8b95-62e2dfd36d19
+
+	/// Provider reimbursement vs global benchmark
+	measure 'Provider vs Benchmark %' = DIVIDE([Avg Reimbursement Per Claim] - [Global Avg Reimbursement], [Global Avg Reimbursement], 0)
+		formatString: 0.00%
+		displayFolder: 4. Risk & Benchmark Measures
+		lineageTag: 08d26a41-8b0e-47a8-9ab4-3a9f16488438
+
+	/// Average diagnosis codes per claim - padding fraud signal
+	measure 'Diagnosis Padding Score' = AVERAGE(fact_claims[diagnosis_code_count])
+		formatString: #,##0.0
+		displayFolder: 4. Risk & Benchmark Measures
+		lineageTag: 8f8b07f3-5813-4c29-bfb9-5eed8a032261
+
+	/// Composite risk score based on 5 fraud signals
+	measure 'Provider Risk Score' =
+			VAR AvgReimbFactor =
+			    IF([Provider vs Benchmark %] > 2, 3,
+			    IF([Provider vs Benchmark %] > 1, 2,
+			    IF([Provider vs Benchmark %] > 0.5, 1, 0)))
+			VAR DeceasedFactor =
+			    IF([Deceased Patient Claims] > 10, 3,
+			    IF([Deceased Patient Claims] > 5, 2,
+			    IF([Deceased Patient Claims] > 0, 1, 0)))
+			VAR SameDayFactor =
+			    IF([Same Day Discharge %] > 0.1, 2,
+			    IF([Same Day Discharge %] > 0.05, 1, 0))
+			VAR PaddingFactor =
+			    IF([Diagnosis Padding Score] > 9.5, 2,
+			    IF([Diagnosis Padding Score] > 8.5, 1, 0))
+			VAR FraudFactor =
+			    IF(SELECTEDVALUE(dim_provider[is_potential_fraud]) = TRUE(), 5, 0)
+			RETURN
+			    AvgReimbFactor + DeceasedFactor + SameDayFactor + PaddingFactor + FraudFactor
+		formatString: #,##0.0
+		displayFolder: 4. Risk & Benchmark Measures
+		lineageTag: 5140845b-68a1-4136-b789-f20cb3a7443d
+
+	/// Risk tier classification based on composite score
+	measure 'Risk Category' =
+			VAR Score = [Provider Risk Score]
+			RETURN
+			    IF(Score >= 9,  "🔴 Critical",
+			    IF(Score >= 6,  "🟠 High",
+			    IF(Score >= 3,  "🟡 Medium",
+			    IF(Score >= 1,  "🟢 Low",
+			                    "⚪ Clean"))))
+		formatString: @
+		displayFolder: 4. Risk & Benchmark Measures
+		lineageTag: e53a1370-c555-4fc5-82b0-f86a0b219ad9
+
+	/// Month-over-month reimbursement growth rate
+	measure 'Reimbursement MoM %' =
+			
+			VAR Current_Reimbursement = [Total Reimbursement]
+			VAR Previous_Reimbursement =
+			    CALCULATE(
+			        [Total Reimbursement],
+			        PREVIOUSMONTH(dim_date[full_date])
+			    )
+			RETURN
+			    DIVIDE(
+			        Current_Reimbursement - Previous_Reimbursement,
+			        Previous_Reimbursement,
+			        0
+			    )
+		formatString: 0.00%
+		displayFolder: 5. Time Intelligence
+		lineageTag: f6ef737c-40a2-4a5d-822e-0eb824ca995a
+
+	/// Year-to-date total reimbursement
+	measure 'Reimbursement YTD' =
+			CALCULATE(
+			    [Total Reimbursement],
+			    DATESYTD(dim_date[full_date])
+			)
+		formatString: $#,##0
+		displayFolder: 5. Time Intelligence
+		lineageTag: 52cb7284-c219-4bfa-97b5-f9fed116a613
+
+	/// Rolling 3-month total claims
+	measure 'Claims Rolling 3M' =
+			CALCULATE(
+			    [Total Claims],
+			    DATESINPERIOD(
+			        dim_date[full_date],
+			        LASTDATE(dim_date[full_date]),
+			        -3,
+			        MONTH
+			    )
+			)
+		formatString: #,##0
+		displayFolder: 5. Time Intelligence
+		lineageTag: 6423620e-1ea7-4537-91a4-bcb857f26150
+
+	/// Rolling 3-month total reimbursement
+	measure 'Reimbursement Rolling 3M' =
+			CALCULATE(
+			    [Total Reimbursement],
+			    DATESINPERIOD(
+			        dim_date[full_date],
+			        LASTDATE(dim_date[full_date]),
+			        -3,
+			        MONTH
+			    )
+			)
+		formatString: $#,##0
+		displayFolder: 5. Time Intelligence
+		lineageTag: b695953d-80cc-4033-b7fc-618dbbda5ce5
+
+	/// Dynamic page title responding to slicer selections
+	measure 'Page Title' =
+			"MediSight | Medicare Analytics | " &
+			COALESCE(SELECTEDVALUE(dim_date[year_num]), "All Years") &
+			" | " &
+			COALESCE(SELECTEDVALUE(dim_geography[state_name]), "All States")
+		formatString: @
+		displayFolder: 6. Dynamic & UX Measures
+		lineageTag: 1262cb09-2bc0-402f-ad24-4d022d7d8c0e
+
+	/// RAG status for fraud rate KPI card
+	measure 'Fraud Rate RAG' =
+			VAR Rate = [Fraud Rate %]
+			RETURN
+			    IF(Rate > 0.12, "🔴 HIGH ALERT",
+			    IF(Rate > 0.08, "🟡 MONITOR",
+			    "🟢 NORMAL"))
+		formatString: @
+		displayFolder: 6. Dynamic & UX Measures
+		lineageTag: 07eddac3-3f80-4446-9518-f4522fcc4b8a
+
+	/// RAG status for deceased patient claims
+	measure 'Deceased Claims Alert' =
+			IF([Deceased Patient Claims] > 0,
+			    "🔴 " & FORMAT([Deceased Patient Claims], "#,##0") & " Claims from Deceased Patients",
+			    "🟢 No Deceased Patient Claims")
+		formatString: @
+		displayFolder: 6. Dynamic & UX Measures
+		lineageTag: a6d66541-c61f-401c-81e5-cef2d912fb96
+
+	/// Dynamic provider page title
+	measure 'Provider Page Title' =
+			"Provider Risk Intelligence | " &
+			COALESCE(SELECTEDVALUE(dim_provider[fraud_label]), "All Providers")
+		formatString: @
+		displayFolder: 6. Dynamic & UX Measures
+		lineageTag: b536f5f8-d975-46f7-bc1c-dab8262c7635
+
+	/// Total fraud financial exposure in readable format
+	measure 'Fraud Exposure Summary' =
+			"Fraud Exposure: $" & FORMAT([Fraud Reimbursement], "#,##0") &
+			" (" & FORMAT([Fraud Reimbursement %], "0.0%") & " of total)"
+		displayFolder: 6. Dynamic & UX Measures
+		lineageTag: e64048e8-73f8-46c8-be74-db6c6c41bca4
+
+		annotation PBI_FormatHint = {"isText":true}
+
+	/// High risk provider count for executive alert
+	measure 'High Risk Provider Count' =
+			CALCULATE(
+			    DISTINCTCOUNT(fact_claims[provider_key]),
+			    dim_provider[is_potential_fraud] = TRUE()
+			)
+		formatString: #,##0
+		displayFolder: 6. Dynamic & UX Measures
+		lineageTag: ad00d861-bfca-47cc-ab8c-dde4926abd17
+
+	/// Reimbursement per beneficiary
+	measure 'Avg Reimbursement Per Beneficiary' = DIVIDE([Total Reimbursement], [Total Beneficiaries], 0)
+		formatString: $#,##0.00
+		displayFolder: 1. Base Measures
+		lineageTag: a15185ca-6b80-49e8-95f3-6d14319dfd5f
+
+	/// Average admission duration for inpatient claims
+	measure 'Avg Length of Stay' =
+			CALCULATE(
+			    AVERAGE(fact_claims[admission_duration_days]),
+			    fact_claims[claim_type] = "Inpatient",
+			    NOT ISBLANK(fact_claims[admission_duration_days])
+			)
+		formatString: #,##0.0
+		displayFolder: 3. IP vs OP Measures
+		lineageTag: 4803a0f3-d5aa-41eb-99fb-c8fc421c7b91
+
+	/// Average diagnosis codes per claim
+	measure 'Avg Diagnosis Codes' = AVERAGE(fact_claims[diagnosis_code_count])
+		formatString: #,##0.00
+		displayFolder: 4. Risk & Benchmark Measures
+		lineageTag: 7bee68c0-1667-45ea-8f53-9cd9bbe3ec9c
+
+	/// Count of providers above 150 pct of global average reimbursement
+	measure 'Outlier Provider Count' =
+			
+			COUNTROWS(
+			    FILTER(
+			        agg_provider_summary,
+			        agg_provider_summary[avg_reimbursement_per_claim] > [Global Avg Reimbursement] * 1.5
+			    )
+			)
+		formatString: #,##0
+		displayFolder: 4. Risk & Benchmark Measures
+		lineageTag: 3d41929b-deb8-43d2-9a38-98fae662879f
+
+	/// Dynamic Top N providers by selected measure - uses TopN Selector parameter
+	measure 'Top N Provider Reimbursement' =
+			VAR N = [TopN Selector Value]
+			VAR ProviderRank =
+			    RANKX(
+			        ALL(dim_provider[provider_id]),
+			        [Total Reimbursement],
+			        ,
+			        DESC,
+			        DENSE
+			    )
+			RETURN
+			    IF(ProviderRank <= N, [Total Reimbursement], BLANK())
+		formatString: $#,##0
+		displayFolder: 6. Dynamic & UX Measures
+		lineageTag: 74dc484d-c90b-4700-9604-135f746bb489
+
+	/// Reimbursement for providers above risk threshold - uses Risk Threshold parameter
+	measure 'At Risk Reimbursement' =
+			CALCULATE(
+			    [Total Reimbursement],
+			    FILTER(
+			        VALUES(dim_provider[provider_id]),
+			        [Provider Risk Score] >= [Risk Threshold Value]
+			    )
+			)
+		formatString: $#,##0
+		displayFolder: 6. Dynamic & UX Measures
+		lineageTag: 3300a27e-d3b9-417e-b669-055deaad1cca
+
+	measure 'Critical Providers' =
+			
+			CALCULATE(
+			    DISTINCTCOUNT(dim_provider[provider_id]),
+			    FILTER(
+			        VALUES(dim_provider[provider_id]),
+			        [Provider Risk Score] >= 9
+			    )
+			)
+		formatString: 0
+		lineageTag: 3210f240-d773-44cf-b992-086c013ad4af
+
+	measure 'High Risk Providers' =
+			
+			CALCULATE(
+			    DISTINCTCOUNT(dim_provider[provider_id]),
+			    FILTER(
+			        VALUES(dim_provider[provider_id]),
+			        [Provider Risk Score] >= 6 && [Provider Risk Score] < 9
+			    )
+			)
+		formatString: 0
+		lineageTag: 121378e5-2e95-4561-a39c-47d1e3e8c844
+
+	measure 'Medium Risk Providers' =
+			
+			CALCULATE(
+			    DISTINCTCOUNT(dim_provider[provider_id]),
+			    FILTER(
+			        VALUES(dim_provider[provider_id]),
+			        [Provider Risk Score] >= 3 && [Provider Risk Score] < 6
+			    )
+			)
+		formatString: 0
+		lineageTag: 39b3bfee-6b49-41cd-ae12-2d9ae50bce01
+
+	measure 'Low Risk Providers' =
+			
+			CALCULATE(
+			    DISTINCTCOUNT(dim_provider[provider_id]),
+			    FILTER(
+			        VALUES(dim_provider[provider_id]),
+			        [Provider Risk Score] >= 1 && [Provider Risk Score] < 3
+			    )
+			)
+		formatString: 0
+		lineageTag: 79bb72a5-5b57-4ea1-ad73-2425454ef09e
+
+	measure 'Clean Providers' =
+			
+			CALCULATE(
+			    DISTINCTCOUNT(dim_provider[provider_id]),
+			    FILTER(
+			        VALUES(dim_provider[provider_id]),
+			        [Provider Risk Score] = 0
+			    )
+			)
+		formatString: 0
+		lineageTag: 4244f3a1-8f5f-4e6a-a381-0d359be7bb26
+
+	measure 'Top N Provider Flag' =
+			
+			VAR N = [TopN Selector Value]
+			VAR ProviderRank =
+			    RANKX(
+			        ALL(dim_provider[provider_id]),
+			        [Total Reimbursement],
+			        ,
+			        DESC,
+			        DENSE
+			    )
+			RETURN
+			    IF(ProviderRank <= N, 1, BLANK())
+		formatString: 0
+		displayFolder: 6. Dynamic & UX Measures
+		lineageTag: 1ffcff0c-deb8-4703-a386-e573078ebcc2
+
+	/// Selected measure value from disconnected switcher table
+	measure 'Selected Measure' =
+			VAR SelectedName = SELECTEDVALUE('Measure Switcher'[Measure Name])
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    SelectedName = "Total Claims", [Total Claims],
+			    SelectedName = "Total Reimbursement", [Total Reimbursement],
+			    SelectedName = "Avg Reimbursement Per Claim", [Avg Reimbursement Per Claim],
+			    SelectedName = "Fraud Rate %", [Fraud Rate %],
+			    SelectedName = "Provider Risk Score", [Provider Risk Score],
+			    SelectedName = "Deceased Patient Claims", [Deceased Patient Claims],
+			    [Total Reimbursement]
+			)
+		formatString: #,##0.00
+		displayFolder: 6. Dynamic & UX Measures
+		lineageTag: c4792233-d052-4c3c-b298-d13adcba5925
+
+	/// Dynamic label showing which measure is currently selected
+	measure 'Selected Measure Label' = COALESCE(SELECTEDVALUE('Measure Switcher'[Measure Name]), "Total Reimbursement")
+		formatString: @
+		displayFolder: 6. Dynamic & UX Measures
+		lineageTag: a63adc37-e6de-41af-903d-7c993994a2c5
+
+	/// Dynamic map title showing selected measure
+	measure 'Map Title Dynamic' = "Healthcare Spend by State — " & [Selected Measure Label]
+		formatString: @
+		displayFolder: 6. Dynamic & UX Measures
+		lineageTag: 3072ee9f-dbe5-4e80-9398-6eca21bf3450
+
+	measure 'Clustered Bar Title Dynamic' = "Top 15 States — " & [Selected Measure Label]
+		displayFolder: 6. Dynamic & UX Measures
+		lineageTag: 1a652be3-74c2-48f7-bd07-89f2899be5d5
+
+	measure 'Selected Measure (Map Color)' =
+			
+			VAR SelectedName = SELECTEDVALUE('Measure Switcher'[Measure Name])
+			VAR RawValue = [Selected Measure]
+			RETURN
+			    SWITCH(
+			        SelectedName,
+			        "Total Claims",                RawValue,        -- unchanged: high = high volume, not bad
+			        "Total Reimbursement",         RawValue,        -- unchanged: high = high spend, not bad
+			        "Avg Reimbursement Per Claim", RawValue,        -- unchanged: high = higher cost, not bad
+			        "Fraud Rate %",                -1 * RawValue,   -- flipped: high = bad
+			        "Provider Risk Score",         -1 * RawValue,   -- flipped: high = bad
+			        "Deceased Patient Claims",     -1 * RawValue,   -- flipped: high = bad
+			        RawValue                                        -- fallback, just in case
+			    )
+		lineageTag: 436fa7fc-e3be-45bd-8f49-8b0aaa5f8e5e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Capped Reimbursement' =
+			
+			SUMX(fact_claims, MIN(fact_claims[claim_reimbursement_amt], SELECTEDVALUE('Cap Amount'[Cap Amount])))
+		formatString: 0
+		lineageTag: 880cf67b-6b8e-40ec-90eb-7599cb07d009
+
+	measure 'Cap Savings $' = [Total Reimbursement] - [Capped Reimbursement]
+		formatString: 0
+		lineageTag: 599fe105-2053-4a82-a4b6-0e2d6cfaafa5
+
+	measure 'Claims Affected by Cap' =
+			
+			CALCULATE(COUNTROWS(fact_claims), fact_claims[claim_reimbursement_amt] > SELECTEDVALUE('Cap Amount'[Cap Amount]))
+		formatString: 0
+		lineageTag: be427ce2-a084-455c-a434-72a5c2cfff20
+
+	measure '% Claims Affected by Cap' = DIVIDE([Claims Affected by Cap], [Total Claims])
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 35e7c3f5-9ac6-4e21-84a2-66bbfd33fc11
+
+	measure 'Risk Factor - Reimbursement Anomaly' =
+			
+			IF([Provider vs Benchmark %] > 2, 3,
+			IF([Provider vs Benchmark %] > 1, 2,
+			IF([Provider vs Benchmark %] > 0.5, 1, 0)))
+		formatString: 0
+		displayFolder: 4. Risk & Benchmark Measures
+		lineageTag: a317baa6-4f78-4163-be1a-689fa438b029
+
+	measure 'Risk Factor - Deceased Claims' =
+			
+			IF([Deceased Patient Claims] > 10, 3,
+			IF([Deceased Patient Claims] > 5, 2,
+			IF([Deceased Patient Claims] > 0, 1, 0)))
+		formatString: 0
+		displayFolder: 4. Risk & Benchmark Measures
+		lineageTag: de4b1b89-f399-42a3-a773-5392e83761ed
+
+	measure 'Risk Factor - Same Day Discharge' =
+			
+			IF([Same Day Discharge %] > 0.1, 2,
+			IF([Same Day Discharge %] > 0.05, 1, 0))
+		formatString: 0
+		displayFolder: 4. Risk & Benchmark Measures
+		lineageTag: 2d67b20e-3f79-4643-989d-9d1e6cabdf77
+
+	measure 'Risk Factor - Diagnosis Padding' =
+			
+			IF([Diagnosis Padding Score] > 9.5, 2,
+			IF([Diagnosis Padding Score] > 8.5, 1, 0))
+		formatString: 0
+		displayFolder: 4. Risk & Benchmark Measures
+		lineageTag: 2b9a7b46-d234-494a-97d8-454c10b71947
+
+	measure 'Risk Factor - Known Fraud Label' =
+			
+			IF(SELECTEDVALUE(dim_provider[is_potential_fraud]) = TRUE(), 5, 0)
+		formatString: 0
+		displayFolder: 4. Risk & Benchmark Measures
+		lineageTag: 034c4f76-18fa-42c3-9ef3-09d5374f77e4
+
+	measure 'Risk Score Reconciliation Check' =
+			
+			[Provider Risk Score] -
+			(
+			    [Risk Factor - Reimbursement Anomaly] +
+			    [Risk Factor - Deceased Claims] +
+			    [Risk Factor - Same Day Discharge] +
+			    [Risk Factor - Diagnosis Padding] +
+			    [Risk Factor - Known Fraud Label]
+			)
+		formatString: 0
+		displayFolder: 4. Risk & Benchmark Measures
+		lineageTag: 8f1c571e-1d23-4d7d-a070-6619e8c9b3d9
+
+	measure 'Payment Hold Recommendation' =
+			
+			VAR MinVolume = [Total Claims] >= 5
+			VAR SameDayFlag = [Same Day Discharge %] > 0.10
+			VAR PaddingFlag = [Diagnosis Padding Score] > 8.5
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    NOT MinVolume, "⚪ Insufficient Volume for Assessment",
+			    SameDayFlag && PaddingFlag, "🔴 Recommend Payment Hold — Pending Review",
+			    SameDayFlag || PaddingFlag, "🟠 Recommend Pre-Payment Review",
+			    "🟢 Standard Processing"
+			)
+		lineageTag: 206c6bab-6af1-4ad4-ab35-28b701a6e174
+
+	measure 'Disease Beneficiary Count' =
+			
+			VAR SelectedDisease = SELECTEDVALUE('Disease List'[Disease Name])
+			RETURN
+			COUNTROWS(
+			    FILTER(
+			        VALUES(dim_beneficiary[beneficiary_id]),
+			        CALCULATE(COUNTROWS(fact_claims)) > 0 &&
+			        SWITCH(
+			            SelectedDisease,
+			            "Alzheimer's", CALCULATE(MAX(dim_beneficiary[has_alzheimer])) = 1,
+			            "Heart Failure", CALCULATE(MAX(dim_beneficiary[has_heart_failure])) = 1,
+			            "Kidney Disease", CALCULATE(MAX(dim_beneficiary[has_kidney_disease])) = 1,
+			            "Cancer", CALCULATE(MAX(dim_beneficiary[has_cancer])) = 1,
+			            "COPD", CALCULATE(MAX(dim_beneficiary[has_obstr_pulmonary])) = 1,
+			            "Depression", CALCULATE(MAX(dim_beneficiary[has_depression])) = 1,
+			            "Diabetes", CALCULATE(MAX(dim_beneficiary[has_diabetes])) = 1,
+			            "Ischemic Heart Disease", CALCULATE(MAX(dim_beneficiary[has_ischemic_heart])) = 1,
+			            "Osteoporosis", CALCULATE(MAX(dim_beneficiary[has_osteoporosis])) = 1,
+			            "Rheumatoid Arthritis", CALCULATE(MAX(dim_beneficiary[has_rheumatoid_arthritis])) = 1,
+			            "Stroke", CALCULATE(MAX(dim_beneficiary[has_stroke])) = 1,
+			            FALSE()
+			        )
+			    )
+			)
+		formatString: 0
+		lineageTag: 6fa68a8c-251e-4c9f-96fc-b86660c787bf
+
+	measure 'Providers Above Threshold' =
+			
+			CALCULATE(
+			    DISTINCTCOUNT(dim_provider[provider_id]),
+			    FILTER(
+			        VALUES(dim_provider[provider_id]),
+			        CALCULATE([Provider Risk Score]) >= [Risk Threshold Value]
+			    )
+			)
+		formatString: 0
+		lineageTag: 1bbcd3d2-0756-4526-b8db-4b30bef2cf07
+
+	measure 'Estimated Dollar Exposure Above Threshold' =
+			
+			SUMX(
+			    FILTER(
+			        VALUES(dim_provider[provider_id]),
+			        CALCULATE([Provider Risk Score]) >= [Risk Threshold Value]
+			    ),
+			    CALCULATE([Total Reimbursement])
+			)
+		formatString: 0
+		lineageTag: b6facfa1-ad40-4253-a906-3b5c4259c797
+
+	measure 'Dollar Exposure Under Review' =
+			
+			SUMX(
+			    FILTER(
+			        VALUES(dim_provider[provider_id]),
+			        [Payment Hold Recommendation] IN {"🔴 Recommend Payment Hold — Pending Review", "🟠 Recommend Pre-Payment Review"}
+			    ),
+			    [Total Reimbursement]
+			)
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 89a42fa0-f145-4644-a4f1-e6fb2c5b543e
+
+	measure 'Executive Summary Narrative' =
+			
+			"Reimbursement: $" & FORMAT(DIVIDE([Total Reimbursement], 1000000), "#,##0.0") & "M  •  " &
+			"Fraud: " & FORMAT([Fraud Rate %], "0.0%") & " ($" & FORMAT(DIVIDE([Fraud Reimbursement], 1000000), "#,##0.0") & "M, " & FORMAT([Fraud Reimbursement %], "0.0%") & " of total)  •  " &
+			"At Threshold: " & FORMAT([Providers Above Threshold], "#,##0") & " providers ($" & FORMAT(DIVIDE([Estimated Dollar Exposure Above Threshold], 1000000), "#,##0.0") & "M)  •  " &
+			"Care Mgmt: " & FORMAT([Beneficiaries Recommended for Enrollment], "#,##0") & " enrolled  •  " &
+			"Billing Review: $" & FORMAT(DIVIDE([Dollar Exposure Under Review], 1000000), "#,##0.0") & "M"
+		lineageTag: 9e0d2a67-18ad-4087-bdfa-83480e267eec
+
+	column claim_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 8a80805f-c9bd-4f1d-834d-871a3a71ed1b
+		summarizeBy: sum
+		sourceColumn: claim_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column claim_id
+		dataType: string
+		lineageTag: 2322ac23-c8b1-4b9d-8629-121cd90fbb99
+		summarizeBy: none
+		sourceColumn: claim_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column provider_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 288ccc92-7fe5-44cc-9a95-2b85b577ec26
+		summarizeBy: none
+		sourceColumn: provider_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column beneficiary_key
+		dataType: int64
+		formatString: 0
+		lineageTag: ba5217bd-e4b2-469b-85a2-eb93f9438f57
+		summarizeBy: none
+		sourceColumn: beneficiary_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column claim_start_date_key
+		dataType: int64
+		formatString: 0
+		lineageTag: d2480095-28a0-4881-a61a-956e5a42f02b
+		summarizeBy: none
+		sourceColumn: claim_start_date_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column geo_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 32befc6c-4b27-45f0-8487-28ff5c1ab862
+		summarizeBy: sum
+		sourceColumn: geo_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column claim_type
+		dataType: string
+		lineageTag: fe91d6d3-4a2f-44c1-974c-30130e32a5c5
+		summarizeBy: none
+		sourceColumn: claim_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_potential_fraud
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 496d7521-ccba-4add-a726-7260473a3683
+		summarizeBy: none
+		sourceColumn: is_potential_fraud
+
+		annotation SummarizationSetBy = Automatic
+
+	column claim_reimbursement_amt
+		dataType: int64
+		formatString: 0
+		lineageTag: cb21ac4f-8a2c-4833-be77-b87dfb48f2d9
+		summarizeBy: sum
+		sourceColumn: claim_reimbursement_amt
+
+		annotation SummarizationSetBy = Automatic
+
+	column deductible_amt_paid
+		dataType: double
+		lineageTag: 99557790-b8cd-4645-b458-c0835e7e62e7
+		summarizeBy: sum
+		sourceColumn: deductible_amt_paid
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column claim_duration_days
+		dataType: int64
+		formatString: 0
+		lineageTag: d35fce8f-d8a4-4bc8-98bc-e13c85f00475
+		summarizeBy: sum
+		sourceColumn: claim_duration_days
+
+		annotation SummarizationSetBy = Automatic
+
+	column admission_duration_days
+		dataType: int64
+		formatString: 0
+		lineageTag: c0a57e4f-b2f0-410a-9876-8bea1a0c31bd
+		summarizeBy: sum
+		sourceColumn: admission_duration_days
+
+		annotation SummarizationSetBy = Automatic
+
+	column diagnosis_code_count
+		dataType: int64
+		formatString: 0
+		lineageTag: 8abe080e-72d1-4f12-9e63-e0701b08455b
+		summarizeBy: sum
+		sourceColumn: diagnosis_code_count
+
+		annotation SummarizationSetBy = Automatic
+
+	column procedure_code_count
+		dataType: int64
+		formatString: 0
+		lineageTag: b7e37b16-d310-4c42-86f9-3cb4f0b6f0b9
+		summarizeBy: sum
+		sourceColumn: procedure_code_count
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_zero_reimbursement
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 3bb4fdf3-06ee-49e2-982b-81cad359ad22
+		summarizeBy: none
+		sourceColumn: is_zero_reimbursement
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_same_day_discharge
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 8f60cccb-6033-4b54-8b2c-123bf5d0b77c
+		summarizeBy: none
+		sourceColumn: is_same_day_discharge
+
+		annotation SummarizationSetBy = Automatic
+
+	column dwh_created_at
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 8ed77ac8-9abe-4f7d-9889-f389c76c7430
+		summarizeBy: none
+		sourceColumn: dwh_created_at
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fact_claims = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("LAPTOP-03S07GO9"),
+				    MediSight = Source{[Name="MediSight"]}[Data],
+				    gold_fact_claims = MediSight{[Schema="gold",Item="fact_claims"]}[Data]
+				in
+				    gold_fact_claims
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

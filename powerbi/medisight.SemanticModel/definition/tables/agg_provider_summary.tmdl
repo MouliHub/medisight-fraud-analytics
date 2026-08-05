@@ -1,0 +1,201 @@
+table agg_provider_summary
+	lineageTag: 8ae26a1f-ccca-41bd-9216-fb205b4a8393
+
+	column provider_id
+		dataType: string
+		lineageTag: 2b4c3c9b-f5d8-4ae1-9692-a3cc61a01ff6
+		summarizeBy: none
+		sourceColumn: provider_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_potential_fraud
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 91d845e1-c6b9-4e6e-b99c-6b91ae32415f
+		summarizeBy: none
+		sourceColumn: is_potential_fraud
+
+		annotation SummarizationSetBy = Automatic
+
+	column fraud_label
+		dataType: string
+		lineageTag: e9318d9d-4b09-4a4c-abb0-9bd7fbede79e
+		summarizeBy: none
+		sourceColumn: fraud_label
+
+		annotation SummarizationSetBy = Automatic
+
+	column total_claims
+		dataType: int64
+		formatString: 0
+		lineageTag: 3871c9a2-dae2-467a-8716-98e4e83fc89c
+		summarizeBy: sum
+		sourceColumn: total_claims
+
+		annotation SummarizationSetBy = Automatic
+
+	column total_ip_claims
+		dataType: int64
+		formatString: 0
+		lineageTag: 2453e1c6-6aaa-4900-ae39-93a321160dd8
+		summarizeBy: sum
+		sourceColumn: total_ip_claims
+
+		annotation SummarizationSetBy = Automatic
+
+	column total_op_claims
+		dataType: int64
+		formatString: 0
+		lineageTag: bc1a0491-f916-4462-b54f-3d562a4b9ad2
+		summarizeBy: sum
+		sourceColumn: total_op_claims
+
+		annotation SummarizationSetBy = Automatic
+
+	column total_reimbursement
+		dataType: int64
+		formatString: 0
+		lineageTag: 7595edf4-3856-426e-b498-9b246cfea3ae
+		summarizeBy: sum
+		sourceColumn: total_reimbursement
+
+		annotation SummarizationSetBy = Automatic
+
+	column avg_reimbursement_per_claim
+		dataType: double
+		lineageTag: 702b7d89-d1d8-4618-b6e5-973cf38284f1
+		summarizeBy: sum
+		sourceColumn: avg_reimbursement_per_claim
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column max_reimbursement
+		dataType: int64
+		formatString: 0
+		lineageTag: b5457d53-303c-4b47-98ff-891c4dd098a5
+		summarizeBy: sum
+		sourceColumn: max_reimbursement
+
+		annotation SummarizationSetBy = Automatic
+
+	column total_deductible
+		dataType: double
+		lineageTag: ecf17fdb-a15d-4831-a7ce-772656da32ef
+		summarizeBy: sum
+		sourceColumn: total_deductible
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column unique_beneficiaries
+		dataType: int64
+		formatString: 0
+		lineageTag: ef1c5940-518e-4834-abf1-c3a200042287
+		summarizeBy: sum
+		sourceColumn: unique_beneficiaries
+
+		annotation SummarizationSetBy = Automatic
+
+	column unique_attending_physicians
+		dataType: int64
+		formatString: 0
+		lineageTag: 7682819a-3af6-4709-9dfe-0c3118ccde16
+		summarizeBy: sum
+		sourceColumn: unique_attending_physicians
+
+		annotation SummarizationSetBy = Automatic
+
+	column avg_claim_duration_days
+		dataType: double
+		lineageTag: 35d50c16-d5f1-4fa7-b1c3-a288a7d88b8f
+		summarizeBy: sum
+		sourceColumn: avg_claim_duration_days
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column avg_admission_duration_days
+		dataType: double
+		lineageTag: 757ffcbd-e69f-44c1-9bcd-7ec16bd8e083
+		summarizeBy: sum
+		sourceColumn: avg_admission_duration_days
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column avg_diagnosis_code_count
+		dataType: double
+		lineageTag: 2fdc7099-1470-44ed-b5e2-cb7eee939892
+		summarizeBy: sum
+		sourceColumn: avg_diagnosis_code_count
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column avg_procedure_code_count
+		dataType: double
+		lineageTag: 83fbad3f-6d5c-4c75-878e-046ca3ab640c
+		summarizeBy: sum
+		sourceColumn: avg_procedure_code_count
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column zero_reimbursement_claims
+		dataType: int64
+		formatString: 0
+		lineageTag: 960737f5-597b-40e6-88a0-135f5dd471da
+		summarizeBy: sum
+		sourceColumn: zero_reimbursement_claims
+
+		annotation SummarizationSetBy = Automatic
+
+	column same_day_discharge_claims
+		dataType: int64
+		formatString: 0
+		lineageTag: fce54941-4056-4991-bc3a-20fe8ed82d10
+		summarizeBy: sum
+		sourceColumn: same_day_discharge_claims
+
+		annotation SummarizationSetBy = Automatic
+
+	column deceased_patient_claims
+		dataType: int64
+		formatString: 0
+		lineageTag: 7ca5703f-cffe-49ba-9910-f1b99e600165
+		summarizeBy: sum
+		sourceColumn: deceased_patient_claims
+
+		annotation SummarizationSetBy = Automatic
+
+	column dwh_created_at
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 7df200ed-4f86-4515-a4d0-2432f68f54b4
+		summarizeBy: none
+		sourceColumn: dwh_created_at
+
+		annotation SummarizationSetBy = Automatic
+
+	partition agg_provider_summary = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("LAPTOP-03S07GO9"),
+				    MediSight = Source{[Name="MediSight"]}[Data],
+				    gold_agg_provider_summary = MediSight{[Schema="gold",Item="agg_provider_summary"]}[Data]
+				in
+				    gold_agg_provider_summary
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

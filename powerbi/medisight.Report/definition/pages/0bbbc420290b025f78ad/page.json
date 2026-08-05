@@ -1,0 +1,25 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "0bbbc420290b025f78ad",
+  "displayName": "Geographic & Trends",
+  "displayOption": "ActualSize",
+  "height": 1080,
+  "width": 1920,
+  "visualInteractions": [
+    {
+      "source": "c79e9f72bcd40063c063",
+      "target": "93a14646031a88952791",
+      "type": "DataFilter"
+    },
+    {
+      "source": "c79e9f72bcd40063c063",
+      "target": "d462493cce0d412d8900",
+      "type": "DataFilter"
+    },
+    {
+      "source": "c79e9f72bcd40063c063",
+      "target": "05273d9ba63180582062",
+      "type": "DataFilter"
+    }
+  ]
+}

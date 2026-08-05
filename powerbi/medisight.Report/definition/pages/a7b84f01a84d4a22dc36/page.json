@@ -1,0 +1,20 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "a7b84f01a84d4a22dc36",
+  "displayName": "Population Health",
+  "displayOption": "ActualSize",
+  "height": 1080,
+  "width": 1920,
+  "visualInteractions": [
+    {
+      "source": "fdd12cbdb6f1f351836f",
+      "target": "f2faf19f2d834172249e",
+      "type": "DataFilter"
+    },
+    {
+      "source": "fdd12cbdb6f1f351836f",
+      "target": "7c03a8d03734734e8b6f",
+      "type": "DataFilter"
+    }
+  ]
+}

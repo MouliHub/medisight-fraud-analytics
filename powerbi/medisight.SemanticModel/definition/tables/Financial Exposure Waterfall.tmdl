@@ -1,0 +1,48 @@
+table 'Financial Exposure Waterfall'
+	lineageTag: 3e30fcda-77b7-4e04-b8ca-13500aefcf6e
+
+	column Category
+		lineageTag: 1c7c182a-14bb-4bb5-818d-4d664d02ff88
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Category]
+		sortByColumn: 'Sort Order'
+
+		annotation SummarizationSetBy = Automatic
+
+	column Amount
+		formatString: 0
+		lineageTag: e77da7f0-0e21-404f-933a-ebcfe049984e
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Amount]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Sort Order'
+		formatString: 0
+		lineageTag: 2c4090cf-378a-41d7-9b41-d7762d7d5db8
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Sort Order]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Financial Exposure Waterfall' = calculated
+		mode: import
+		source =
+				
+				DATATABLE(
+				    "Category", STRING,
+				    "Amount", INTEGER,
+				    "Sort Order", INTEGER,
+				    {
+				        {"Total Reimbursement",  556543140, 1},
+				        {"Non-Fraud Providers", -260862020, 2},
+				        {"Fraud Labeled",        295681120, 3},
+				        {"High Risk Unlabeled",   24270680, 4}
+				    }
+				)
+
+	annotation PBI_Id = 42b58f1862c6404eb642c49fe6034a57
+

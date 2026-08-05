@@ -1,0 +1,24 @@
+relationship AutoDetected_efb8691b-3ca3-45bf-82e1-12e9ff14995a
+	fromColumn: fact_claims.provider_key
+	toColumn: dim_provider.provider_key
+
+relationship AutoDetected_99170c12-d222-477a-af89-6de49bda024a
+	fromColumn: agg_provider_summary.provider_id
+	toColumn: dim_provider.provider_id
+
+relationship AutoDetected_367ee0d3-d856-4480-a3ad-a59a8a76b772
+	fromColumn: fact_claims.beneficiary_key
+	toColumn: dim_beneficiary.beneficiary_key
+
+relationship AutoDetected_eaf4561e-a814-4701-a491-09e887897b3e
+	fromColumn: agg_state_monthly.state_code
+	toColumn: dim_geography.state_code
+
+relationship AutoDetected_d33356c5-170c-4c60-b92e-feb045e3220f
+	fromColumn: fact_claims.geo_key
+	toColumn: dim_geography.geo_key
+
+relationship 31ab81bd-5473-572e-ad20-bd7694dab17f
+	fromColumn: fact_claims.claim_start_date_key
+	toColumn: dim_date.date_key
+

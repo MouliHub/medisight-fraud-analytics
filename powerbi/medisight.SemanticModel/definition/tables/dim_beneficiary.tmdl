@@ -1,0 +1,357 @@
+table dim_beneficiary
+	lineageTag: 3859d777-dbaf-4338-a483-76a0d00c48ed
+
+	measure 'Beneficiary Annual Cost' =
+			
+			SUM(dim_beneficiary[ip_annual_reimbursement_amt]) + SUM(dim_beneficiary[op_annual_reimbursement_amt])
+		formatString: 0
+		lineageTag: e0dfff2a-6152-4186-b566-26bceb30ac89
+
+	measure 'Care Management Priority Flag' =
+			
+			VAR CondCount = MAX(dim_beneficiary[chronic_condition_count])
+			VAR HasClaimsInContext = CALCULATE(COUNTROWS(fact_claims)) > 0
+			RETURN
+			    IF(
+			        NOT HasClaimsInContext,
+			        "⚪ No Claims in Current Filter",
+			        IF(
+			            CondCount >= 6 && [Beneficiary Annual Cost] >= 10000,
+			            "🔴 High Priority — Enroll",
+			            IF(CondCount >= 6 || [Beneficiary Annual Cost] >= 10000,
+			                "🟠 Moderate Priority — Consider",
+			                "🟢 Standard Care")
+			        )
+			    )
+		lineageTag: 2fe7316d-8130-457b-9fdf-45eba0064b13
+
+	measure 'Beneficiaries Recommended for Enrollment' =
+			
+			VAR Capacity = SELECTEDVALUE('Care Manager Capacity'[Care Manager Capacity], 5000)
+			VAR RankedPool =
+			    FILTER(
+			        VALUES(dim_beneficiary[beneficiary_id]),
+			        CALCULATE(MAX(dim_beneficiary[chronic_condition_count])) >= 6 &&
+			        [Beneficiary Annual Cost] >= 10000 &&
+			        CALCULATE(COUNTROWS(fact_claims)) > 0
+			    )
+			RETURN
+			    MIN(Capacity, COUNTROWS(RankedPool))
+		formatString: 0
+		lineageTag: e1b75b94-4c87-4c8c-b08d-ddbe630551a4
+
+	measure 'Total High Priority Beneficiaries' =
+			
+			CALCULATE(
+			    DISTINCTCOUNT(dim_beneficiary[beneficiary_id]),
+			    FILTER(
+			        VALUES(dim_beneficiary[beneficiary_id]),
+			        CALCULATE(MAX(dim_beneficiary[chronic_condition_count])) >= 6 &&
+			        [Beneficiary Annual Cost] >= 10000 &&
+			        CALCULATE(COUNTROWS(fact_claims)) > 0
+			    )
+			)
+		formatString: 0
+		lineageTag: d52a03bb-c6cf-4764-9659-99a5ce61715d
+
+	measure 'Projected Care Mgmt Savings' =
+			
+			VAR EnrolledCost =
+			    SUMX(
+			        FILTER(VALUES(dim_beneficiary[beneficiary_id]), [Care Management Priority Flag] = "🔴 High Priority — Enroll"),
+			        [Beneficiary Annual Cost]
+			    )
+			VAR AvoidableUtilizationRate = 0.12
+			RETURN
+			    EnrolledCost * AvoidableUtilizationRate
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: c6f4deef-30e1-4d66-a92d-f3199555274b
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column beneficiary_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 525a27a0-df57-4ea0-a05f-e57240103cc8
+		summarizeBy: none
+		sourceColumn: beneficiary_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column beneficiary_id
+		dataType: string
+		lineageTag: 49b2fc89-a06a-403c-b7fa-c6e496cdde0f
+		summarizeBy: none
+		sourceColumn: beneficiary_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column date_of_birth
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 0f081ae9-ed7c-459d-b462-4afee94c3365
+		summarizeBy: none
+		sourceColumn: date_of_birth
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column date_of_death
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: f2fdc1bb-60b4-45f1-8b55-4e6ce31a19e2
+		summarizeBy: none
+		sourceColumn: date_of_death
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column gender
+		dataType: string
+		lineageTag: 3edc88c3-750c-4b8d-8702-481e313d020a
+		summarizeBy: none
+		sourceColumn: gender
+
+		annotation SummarizationSetBy = Automatic
+
+	column renal_disease_indicator
+		dataType: int64
+		formatString: 0
+		lineageTag: 40ad0c31-9573-40f7-ab9b-0dde3ed34418
+		summarizeBy: sum
+		sourceColumn: renal_disease_indicator
+
+		annotation SummarizationSetBy = Automatic
+
+	column state_code
+		dataType: int64
+		formatString: 0
+		lineageTag: 0de2128f-7a1d-42a5-ae74-014d68f147c7
+		summarizeBy: none
+		sourceColumn: state_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column county_code
+		dataType: int64
+		formatString: 0
+		lineageTag: 5d098154-c485-48d9-a632-43d2bbcf9de7
+		summarizeBy: sum
+		sourceColumn: county_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column patient_age
+		dataType: int64
+		formatString: 0
+		lineageTag: 0caccd2a-f66b-46f8-b3fa-cf60252c6260
+		summarizeBy: sum
+		sourceColumn: patient_age
+
+		annotation SummarizationSetBy = Automatic
+
+	column age_group
+		dataType: string
+		lineageTag: 37a0f4d1-4d7d-4cb5-a775-35ef0617a06d
+		summarizeBy: none
+		sourceColumn: age_group
+		sortByColumn: 'Age Group Sort Order'
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_deceased
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: d63239f0-15dd-4e1d-9fae-bb05314294b5
+		summarizeBy: none
+		sourceColumn: is_deceased
+
+		annotation SummarizationSetBy = Automatic
+
+	column chronic_condition_count
+		dataType: int64
+		formatString: 0
+		lineageTag: fb171e54-d09c-41c0-a3a6-4c6729f2216f
+		summarizeBy: sum
+		sourceColumn: chronic_condition_count
+
+		annotation SummarizationSetBy = Automatic
+
+	column has_alzheimer
+		dataType: int64
+		formatString: 0
+		lineageTag: ef26d5ca-7467-4e4e-8b32-78fd63b1441e
+		summarizeBy: sum
+		sourceColumn: has_alzheimer
+
+		annotation SummarizationSetBy = Automatic
+
+	column has_heart_failure
+		dataType: int64
+		formatString: 0
+		lineageTag: 6b26b268-3af4-4aa8-a21c-ad0dbc68d321
+		summarizeBy: sum
+		sourceColumn: has_heart_failure
+
+		annotation SummarizationSetBy = Automatic
+
+	column has_kidney_disease
+		dataType: int64
+		formatString: 0
+		lineageTag: 57a1493a-5cfd-4f7e-b352-248dbc864478
+		summarizeBy: sum
+		sourceColumn: has_kidney_disease
+
+		annotation SummarizationSetBy = Automatic
+
+	column has_cancer
+		dataType: int64
+		formatString: 0
+		lineageTag: 8c6fbeb1-f6d8-4003-ac87-ae9f04f2ef49
+		summarizeBy: sum
+		sourceColumn: has_cancer
+
+		annotation SummarizationSetBy = Automatic
+
+	column has_obstr_pulmonary
+		dataType: int64
+		formatString: 0
+		lineageTag: bfaaa7e8-acda-418a-a6d1-0851679d6f06
+		summarizeBy: sum
+		sourceColumn: has_obstr_pulmonary
+
+		annotation SummarizationSetBy = Automatic
+
+	column has_depression
+		dataType: int64
+		formatString: 0
+		lineageTag: f21c5120-c8b9-4111-a643-6ac784f831c8
+		summarizeBy: sum
+		sourceColumn: has_depression
+
+		annotation SummarizationSetBy = Automatic
+
+	column has_diabetes
+		dataType: int64
+		formatString: 0
+		lineageTag: b5b0e3e8-3284-400b-b5ae-8d6029b5f3b8
+		summarizeBy: sum
+		sourceColumn: has_diabetes
+
+		annotation SummarizationSetBy = Automatic
+
+	column has_ischemic_heart
+		dataType: int64
+		formatString: 0
+		lineageTag: 3efd4ad6-a8da-4a2e-91c8-ba796e624b40
+		summarizeBy: sum
+		sourceColumn: has_ischemic_heart
+
+		annotation SummarizationSetBy = Automatic
+
+	column has_osteoporosis
+		dataType: int64
+		formatString: 0
+		lineageTag: 91e26233-f8ed-4116-aee9-2cf14aa9c6bc
+		summarizeBy: sum
+		sourceColumn: has_osteoporosis
+
+		annotation SummarizationSetBy = Automatic
+
+	column has_rheumatoid_arthritis
+		dataType: int64
+		formatString: 0
+		lineageTag: b234693e-cd5a-44e6-aa01-5f8c68d8ae7a
+		summarizeBy: sum
+		sourceColumn: has_rheumatoid_arthritis
+
+		annotation SummarizationSetBy = Automatic
+
+	column has_stroke
+		dataType: int64
+		formatString: 0
+		lineageTag: c9ed2c3f-a2a6-498c-8bda-1a73ea923086
+		summarizeBy: sum
+		sourceColumn: has_stroke
+
+		annotation SummarizationSetBy = Automatic
+
+	column ip_annual_reimbursement_amt
+		dataType: int64
+		formatString: 0
+		lineageTag: 0bc37c37-e322-4673-979d-b86b814b7414
+		summarizeBy: sum
+		sourceColumn: ip_annual_reimbursement_amt
+
+		annotation SummarizationSetBy = Automatic
+
+	column ip_annual_deductible_amt
+		dataType: int64
+		formatString: 0
+		lineageTag: 030fdcc9-e7b5-4361-8439-45bc5b0f327e
+		summarizeBy: sum
+		sourceColumn: ip_annual_deductible_amt
+
+		annotation SummarizationSetBy = Automatic
+
+	column op_annual_reimbursement_amt
+		dataType: int64
+		formatString: 0
+		lineageTag: fbb51a26-88cd-4d27-9554-7ec5efcc1403
+		summarizeBy: sum
+		sourceColumn: op_annual_reimbursement_amt
+
+		annotation SummarizationSetBy = Automatic
+
+	column op_annual_deductible_amt
+		dataType: int64
+		formatString: 0
+		lineageTag: 7eb8c79a-2e07-4f71-bcef-487c1a5d1e38
+		summarizeBy: sum
+		sourceColumn: op_annual_deductible_amt
+
+		annotation SummarizationSetBy = Automatic
+
+	column dwh_created_at
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: fed8b0cf-69df-4aa0-a895-cd3f8accd096
+		summarizeBy: none
+		sourceColumn: dwh_created_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Age Group Sort Order' =
+			
+			SWITCH(
+			    TRUE(),
+			    dim_beneficiary[patient_age] < 65, 1,
+			    dim_beneficiary[patient_age] <= 74, 2,
+			    dim_beneficiary[patient_age] <= 84, 3,
+			    dim_beneficiary[patient_age] >= 85, 4,
+			    99
+			)
+		formatString: 0
+		lineageTag: 99ac3ca1-dcb0-464f-b09a-593c4db689bb
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_beneficiary = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("LAPTOP-03S07GO9"),
+				    MediSight = Source{[Name="MediSight"]}[Data],
+				    gold_dim_beneficiary = MediSight{[Schema="gold",Item="dim_beneficiary"]}[Data]
+				in
+				    gold_dim_beneficiary
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+
