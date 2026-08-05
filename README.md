@@ -123,15 +123,15 @@ Regional and state-level fraud/spend concentration, with a flexible measure swit
 
 | Executive Command Center | Financial Intelligence |
 |---|---|
-| ![Executive](screenshots/01_executive.png) | ![Financial](screenshots/02_financial.png) |
+| ![Executive](screenshots/executive_command_center.png) | ![Financial](screenshots/financial_intelligence.png) |
 
 | Provider Risk Intelligence | Population Health |
 |---|---|
-| ![Provider Risk](screenshots/03_provider_risk.png) | ![Population Health](screenshots/04_population_health.png) |
+| ![Provider Risk](screenshots/provider_risk_intelligence.png) | ![Population Health](screenshots/population_health.png) |
 
 | Operational Efficiency | Geographic & Trends |
 |---|---|
-| ![Operational](screenshots/05_operational.png) | ![Geographic](screenshots/06_geographic.png) |
+| ![Operational](screenshots/operational_efficiency.png) | ![Geographic](screenshots/geographic_%26_trends.png) |
 
 ---
 
@@ -218,7 +218,7 @@ Additional design and technical documentation in [`docs/`](docs/):
 ## Author
 
 **Chandramouli Logisa**
-[LinkedIn] · [Portfolio] · [Email]
+[https://www.linkedin.com/in/chandramoulilogisa/] · [chandramouli17333@gmail.com]
 
 ---
 
