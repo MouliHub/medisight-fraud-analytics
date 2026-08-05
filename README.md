@@ -82,7 +82,7 @@ Raw CMS CSVs
 
 ## Dataset
 
-**Source:** CMS Medicare Provider Fraud Detection dataset (public) — see [`data/README.md`](data/README.md) for the download link.
+**Source:** CMS Medicare Provider Fraud Detection dataset (public) — see **Source:** [CMS Medicare Provider Fraud Detection — Kaggle](https://www.kaggle.com/datasets/rohitrox/healthcare-provider-fraud-detection-analysis) (public dataset, not included in this repository) for the download link.
 
 | Metric | Value |
 |---|---|
